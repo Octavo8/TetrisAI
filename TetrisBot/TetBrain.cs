@@ -123,7 +123,7 @@ namespace TetrisBot
             }
             else
             {
-                var possibleMoves = getAllPossibleMoves();
+                var possibleMoves = GetAllPossibleRatedMoves();
 
                 saveState(StateSynced);
 
@@ -172,129 +172,155 @@ namespace TetrisBot
             
         }
 
-        private Move getHighestRatedMove(List<Move> moves)
-        {
+        //private Move getHighestRatedMove(List<Move> moves)
+        //{
 
-            int maxRating = int.MinValue; //this guarentees the a lower bound.
-            int maxMove; // no need for this, = -1;
-            List<int> ties = new List<int>();
+        //    int maxRating = int.MinValue; //this guarentees the a lower bound.
+        //    int maxMove; // no need for this, = -1;
+        //    List<int> ties = new List<int>();
             
-            for (int i = 0; i < moves.Count; i++)
-            {
-                if (moves[i].rating > maxRating)
-                {
-                    maxRating = moves[i].rating;
-                    maxMove = i;
+        //    for (int i = 0; i < moves.Count; i++)
+        //    {
+        //        if (moves[i].rating > maxRating)
+        //        {
+        //            maxRating = moves[i].rating;
+        //            maxMove = i;
 
-                    ties = new List<int>() { i };//NB find out what this does
-                    //ever time a move with a higher rating shows up, you create a new list of
-                    // ints, with the first element having the value of i
-                }
-                else if (moves[i].rating == maxRating)
-                {
-                    ties.Add(i);
-                }
-            }
+        //            ties = new List<int>() { i };//NB find out what this does
+        //            //ever time a move with a higher rating shows up, you create a new list of
+        //            // ints, with the first element having the value of i
+        //        }
+        //        else if (moves[i].rating == maxRating)
+        //        {
+        //            ties.Add(i);
+        //        }
+        //    }
 
-            Move move = moves[ties[0]];
-            move.algorithim.tieCount = ties.Count;
-            return move;
+        //    Move move = moves[ties[0]];
+        //    move.algorithim.tieCount = ties.Count;
+        //    return move;
             
-        }
+        //}
 
-        /// <summary>
-        /// Run through all the possible moves that can be made in a given situation
-        /// </summary>
-        /// <returns>
-        /// A list of Move objects which all have corresponding ratings
-        /// </returns>
-        public List<Move> getAllPossibleMoves()
+        public IEnumerable<Move> GetAllPossibleRatedMoves()
         {
             this.isGameover = false;
-
             List<Move> possibleMoves = new List<Move>();
 
             saveState(StateSynced);
-            
+
             for (int rotations = 0; rotations < 4; rotations++)
-            {//I get this first loop. 4 rotations, 4 possible ways you could rotate a piece.
-                List<int> originalPos = new List<int>();
-
-                for (int translations = -5; translations <= 5; translations++)
-                {//I don't get this loop. Why 10 translations? surely there are only 3 translations -
-                 //left, right and no move?  Also, why is this a nested loop? If we are looking at all possible
-                 //moves, their options are a rotation and a translation?
-
-                    //There's some interesting and cool code here. If you want help with it, let me know.
-                    loadState(prevGameState); 
-
-                    //rotate the shape
-                    for (int i = 0; i < rotations; i++)
-                    {
-                        gameState.CurrentPiece.RotateClockwise();
-                    }
-
-                    //move the shape
-                    if (translations < 0)
-                    {
-                        for (int i = 0; i < Math.Abs(translations); i++)
-                        {
-                            gameState.PlayerInput(PlayerInput.Left);
-                        }
-
-                    }
-                    else if (translations > 0)
-                    {
-                        for (int i = 0; i < translations; i++)
-                        {
-                            gameState.PlayerInput(PlayerInput.Right);
-                        }
-                    }
-
-                    if (!originalPos.Contains(gameState.CurrentPiece.PositionX))
-                    {
-                        Result MoveDownResult = moveToBottom();
-
-                        Algorithim alg = new Algorithim
-                        {
-                            rowsCleared = MoveDownResult.rowsCleared * genomes[currentGenome].rowsCleared,
-                            weightedHeight = getWeightedHeight(gameState) * genomes[currentGenome].weightedHeight,
-                            cumulativeHeight = getCumulativeHeight(gameState) * genomes[currentGenome].cumulativeHeight,
-                            relativeHeight = getRealtiveHeight(gameState) * genomes[currentGenome].relativeHeight,
-                            holes = getHoles(gameState) * genomes[currentGenome].holes,
-                            roughness = getRoughness(gameState) * genomes[currentGenome].roughness
-                        };
-
-                        int rating = 0;
-
-                        rating += alg.rowsCleared * genomes[currentGenome].rowsCleared;
-                        rating += alg.weightedHeight * genomes[currentGenome].weightedHeight;
-                        rating += alg.cumulativeHeight * genomes[currentGenome].cumulativeHeight;
-                        rating += alg.relativeHeight * genomes[currentGenome].relativeHeight;
-                        rating += alg.holes * genomes[currentGenome].holes;
-                        rating += alg.roughness * genomes[currentGenome].roughness;
-
-                        if(this.isGameover == true)
-                        {
-                            rating -= 500;
-                        }
-
-                        possibleMoves.Add(new Move()
-                        {
-                            rotation = rotations,
-                            translation = translations,
-                            rating = rating,
-                            algorithim = alg
-                        });
-                        
-                    }
+            {
+                for (int translation = 0; translation < 3; translation++)
+                {
+                    possibleMoves.Add(new Move { rotation = rotations, translation = translation });
                 }
             }
 
-            loadState(StateSynced);
+            possibleMoves = RateAllPossibleMoves(possibleMoves);
 
             return possibleMoves;
         }
+
+        private List<Move> RateAllPossibleMoves(List<Move> possibleMoves)
+        {
+            //MAGIC
+            return possibleMoves;
+        }
+
+        ///// <summary>
+        ///// Run through all the possible moves that can be made in a given situation
+        ///// </summary>
+        ///// <returns>
+        ///// A list of Move objects which all have corresponding ratings
+        ///// </returns>
+        //public List<Move> getAllPossibleMoves()
+        //{
+        //    this.isGameover = false;
+
+        //    List<Move> possibleMoves = new List<Move>();
+
+        //    saveState(StateSynced);
+
+        //    for (int rotations = 0; rotations < 4; rotations++)
+        //    {//I get this first loop. 4 rotations, 4 possible ways you could rotate a piece.
+        //        List<int> originalPos = new List<int>();
+
+        //        for (int translations = -5; translations <= 5; translations++)
+        //        {//I don't get this loop. Why 10 translations? surely there are only 3 translations -
+        //         //left, right and no move?  Also, why is this a nested loop? If we are looking at all possible
+        //         //moves, their options are a rotation and a translation?
+
+        //            //There's some interesting and cool code here. If you want help with it, let me know.
+        //            loadState(prevGameState); 
+
+        //            //rotate the shape
+        //            for (int i = 0; i < rotations; i++)
+        //            {
+        //                gameState.CurrentPiece.RotateClockwise();
+        //            }
+
+        //            //move the shape
+        //            if (translations < 0)
+        //            {
+        //                for (int i = 0; i < Math.Abs(translations); i++)
+        //                {
+        //                    gameState.PlayerInput(PlayerInput.Left);
+        //                }
+
+        //            }
+        //            else if (translations > 0)
+        //            {
+        //                for (int i = 0; i < translations; i++)
+        //                {
+        //                    gameState.PlayerInput(PlayerInput.Right);
+        //                }
+        //            }
+
+        //            if (!originalPos.Contains(gameState.CurrentPiece.PositionX))
+        //            {
+        //                Result MoveDownResult = moveToBottom();
+
+        //                Algorithim alg = new Algorithim
+        //                {
+        //                    rowsCleared = MoveDownResult.rowsCleared * genomes[currentGenome].rowsCleared,
+        //                    weightedHeight = getWeightedHeight(gameState) * genomes[currentGenome].weightedHeight,
+        //                    cumulativeHeight = getCumulativeHeight(gameState) * genomes[currentGenome].cumulativeHeight,
+        //                    relativeHeight = getRealtiveHeight(gameState) * genomes[currentGenome].relativeHeight,
+        //                    holes = getHoles(gameState) * genomes[currentGenome].holes,
+        //                    roughness = getRoughness(gameState) * genomes[currentGenome].roughness
+        //                };
+
+        //                int rating = 0;
+
+        //                rating += alg.rowsCleared * genomes[currentGenome].rowsCleared;
+        //                rating += alg.weightedHeight * genomes[currentGenome].weightedHeight;
+        //                rating += alg.cumulativeHeight * genomes[currentGenome].cumulativeHeight;
+        //                rating += alg.relativeHeight * genomes[currentGenome].relativeHeight;
+        //                rating += alg.holes * genomes[currentGenome].holes;
+        //                rating += alg.roughness * genomes[currentGenome].roughness;
+
+        //                if(this.isGameover == true)
+        //                {
+        //                    rating -= 500;
+        //                }
+
+        //                possibleMoves.Add(new Move()
+        //                {
+        //                    rotation = rotations,
+        //                    translation = translations,
+        //                    rating = rating,
+        //                    algorithim = alg
+        //                });
+
+        //            }
+        //        }
+        //    }
+
+        //    loadState(StateSynced);
+
+        //    return possibleMoves;
+        //}
 
         public Result moveToBottom()
         {

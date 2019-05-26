@@ -22,7 +22,7 @@ namespace Tetris_Clone
 
         public event EventHandler GameOver;
         public event EventHandler PieceHitBottom;
-        public event EventHandler NewGameStarted;
+        //public event EventHandler NewGameStarted;
 
         public event EventHandler<ShapeEnum[,]> LinesAboutToClear;
         public event EventHandler<int[]> LinesCleared;
