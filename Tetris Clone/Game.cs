@@ -131,6 +131,11 @@ namespace Tetris_Clone
                 case Tetris_Clone.PlayerInput.RotateClockwise:
                     piece.RotateClockwise();
                     CorrectPiecePositionAfterRotation();
+                    if (CheckForDeactivations())
+                    {
+                        piece.RotateAntiClockwise();
+                        CorrectPiecePositionAfterRotation();
+                    }
                     break;
                 default:
                     break;

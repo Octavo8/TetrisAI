@@ -148,7 +148,6 @@ namespace TetrisBot
                 for (var rotations = 0; rotations < move.rotation; rotations++)
                 {
                     StateSynced.PlayerInput(PlayerInput.RotateClockwise);
-                    
                 }
                 switch (move.translation)
                 {
