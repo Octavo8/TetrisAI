@@ -226,7 +226,7 @@ namespace TetrisBot
                  //moves, their options are a rotation and a translation?
 
                     //There's some interesting and cool code here. If you want help with it, let me know.
-                    loadState(prevGameState);
+                    loadState(prevGameState); 
 
                     //rotate the shape
                     for (int i = 0; i < rotations; i++)
