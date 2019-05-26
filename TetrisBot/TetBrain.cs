@@ -26,6 +26,8 @@ namespace TetrisBot
 
         public Algorithim moveAlgorithim { get; set; }
 
+        Random rnd;
+
         #endregion
 
 
@@ -65,7 +67,7 @@ namespace TetrisBot
 
         private void CreateIntialPopulation()
         {
-            Random rnd = new Random();
+            rnd = new Random(DateTime.Now.Millisecond);
 
             for (int i = 0; i < populationSize; i++)
             {
@@ -225,6 +227,8 @@ namespace TetrisBot
         private List<Move> RateAllPossibleMoves(List<Move> possibleMoves)
         {
             //MAGIC
+            int index = rnd.Next(12);
+            possibleMoves[index].rating = 1;
             return possibleMoves;
         }
 
