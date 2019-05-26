@@ -54,7 +54,7 @@ namespace Tetris_Forms_UI
             gameTimer.Start();
             isGameOver = false;
             DrawGame();
-
+            InitaliseAI(); //AI needs to resubscribe to new event handler
             brain.SyncAllStates(game);
 
             GameReady.Invoke(this, new EventArgs());
@@ -76,7 +76,7 @@ namespace Tetris_Forms_UI
             game.PieceHitBottom += brain.hitBottom;
             localDeadGrid = game.DeadGrid;
             game.GameOver += game_GameOver;
-
+            
             game.LinesCleared += game_LinesCleared;
             game.LinesAboutToClear += game_LinesAboutToClear;
             gameTimer.Interval = 10;

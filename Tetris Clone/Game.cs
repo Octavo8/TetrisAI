@@ -22,7 +22,7 @@ namespace Tetris_Clone
 
         public event EventHandler GameOver;
         public event EventHandler PieceHitBottom;
-        //public event EventHandler NewGameStarted;
+        public event EventHandler GameTicked;
 
         public event EventHandler<ShapeEnum[,]> LinesAboutToClear;
         public event EventHandler<int[]> LinesCleared;
@@ -85,6 +85,8 @@ namespace Tetris_Clone
             this.NextPiece = AddNewPiece();
             this.Height = height;
             this.Width = width;
+
+
 
             InitialiseDeadGrid();
 
@@ -174,6 +176,7 @@ namespace Tetris_Clone
                     //the one being used to play the game, and not the one the AI is using
                     //to test moves
                     PieceHitBottom.Invoke(this, new EventArgs());
+                    
                 }
 
                 if (CheckForDeactivations() && isActive)
@@ -181,6 +184,13 @@ namespace Tetris_Clone
                     isGameOver = true;
                     GameOver.Invoke(this, new EventArgs());
                 }
+            }
+            else
+            {
+                //We ticked and nothing hit the floor or went badly wrong, so the AI should move another move here
+                //Raise the game ticked event.
+                //object x = new object();
+                GameTicked.Invoke(this, new EventArgs());
             }
             isTicking = false;
         }

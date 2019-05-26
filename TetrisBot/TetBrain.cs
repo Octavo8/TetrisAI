@@ -9,6 +9,7 @@ namespace TetrisBot
 {
     public class TetBrain
     {
+
         #region Properties
 
         public bool inspectMoveSelection { get; set; }
@@ -33,6 +34,8 @@ namespace TetrisBot
 
         public TetBrain(int popSize = 50)
         {
+            gameState.GameTicked += GameState_GameTicked;
+
             this.moveLimit = 500;
             this.genomes = new List<Genome>();
 
@@ -45,6 +48,7 @@ namespace TetrisBot
 
         public TetBrain(Game gameState, int  popSize = 50)
         {
+            gameState.GameTicked += GameState_GameTicked;
 
             this.moveLimit = 500;
             this.genomes = new List<Genome>();
@@ -57,7 +61,14 @@ namespace TetrisBot
 
             //gameState.GameOver += game_GameOver;//This might need some work
 
+            //Subscribe to the game ticked event:
+
             CreateIntialPopulation();
+        }
+
+        private void GameState_GameTicked(object sender, EventArgs e)
+        {
+            MakeNextMove();
         }
 
         //private void game_GameOver(object sender, EventArgs e)
@@ -139,26 +150,25 @@ namespace TetrisBot
                     StateSynced.PlayerInput(PlayerInput.RotateClockwise);
                     
                 }
-                if (move.translation < 0)
+                switch (move.translation)
                 {
-                    for (var lefts = 0; lefts < Math.Abs(move.translation); lefts++)
-                    {
+                    case 0:
+                        //Do nothing
+                        break;
+                    case 1:
                         StateSynced.PlayerInput(PlayerInput.Left);
-
-                    }
-                }
-                else if (move.translation > 0)
-                {
-                    for (var rights = 0; rights < move.translation; rights++)
-                    {
+                        break;
+                    case 2:
                         StateSynced.PlayerInput(PlayerInput.Right);
-                    }
+                        break;
+                    default:
+                        throw new Exception("Translation selection was out of bounds");
                 }
 
-                if (inspectMoveSelection)
-                {
-                    moveAlgorithim = move.algorithim;
-                }
+                //if (inspectMoveSelection)
+                //{
+                //    moveAlgorithim = move.algorithim;
+                //}
 
                 //Would need to send details to the view with algorothim behavior
             }
